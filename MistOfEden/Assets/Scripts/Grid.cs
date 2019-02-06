@@ -2,6 +2,7 @@
 
 public class Grid : MonoBehaviour
 {
+    public Transform Player; // Поле для отладки привязки игрока к клетке
     private Node[,] _grid; // Массив клеток
     float nodeDiameter; // Диаметр одной клетки
     /// <summary>
@@ -17,13 +18,14 @@ public class Grid : MonoBehaviour
     /// </summary>
     public LayerMask UnwalkableLayerMask;
 
+    int gridSizeX, gridSizeY; // Поля определяющие размер сетки по X и Y
     private void Start()
     {
         // Определяем диаметр клетки
         nodeDiameter = NodeRadius * 2;
         // Определяем, какое количество клеток может поместиться на поле
-        int gridSizeX = Mathf.RoundToInt(GridWorldSize.x / nodeDiameter);
-        int gridSizeY = Mathf.RoundToInt(GridWorldSize.y / nodeDiameter);
+        gridSizeX = Mathf.RoundToInt(GridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(GridWorldSize.y / nodeDiameter);
         CreateGrid(gridSizeX, gridSizeY);
     }
 
@@ -48,15 +50,42 @@ public class Grid : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Метод, который находит клетку на которой стоит юнит
+    /// </summary>
+    /// <param name="worldPosition">Позиция юнита</param>
+    /// <returns></returns>
+    public Node NodeFromWorldPoint(Vector3 worldPosition)
+    {
+        // Находим процентное соотношение к одному из нодов
+        float percentX = (worldPosition.x + GridWorldSize.x / 2) / GridWorldSize.x;
+        float percentY = (worldPosition.z + GridWorldSize.y / 2) / GridWorldSize.y;
+        percentX = Mathf.Clamp01(percentX);
+        percentY = Mathf.Clamp01(percentY);
+
+        // Находим нод по координатам
+        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
+        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+        return _grid[x, y];
+    }
+
+    /// <summary>
+    /// Метод для отладки. Показывает гизмо различных объектов
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.DrawCube(transform.position, new Vector3(GridWorldSize.x, 1, GridWorldSize.y));
-        if(_grid != null)
+        if (_grid != null)
         {
+            var playerNode = NodeFromWorldPoint(Player.position);
             foreach (var node in _grid)
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
-                Gizmos.DrawCube(node.WorldPosition, Vector3.one * nodeDiameter);
+                if (node == playerNode)
+                {
+                    Gizmos.color = Color.cyan;
+                }
+                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (nodeDiameter - 0.1f));
             }
         }
     }
