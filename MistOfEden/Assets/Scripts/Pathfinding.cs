@@ -102,7 +102,7 @@ public class Pathfinding : MonoBehaviour
         }
         path.Reverse();
 
-        grid.path = path;
+        grid.Path = path;
     }
 
     /// <summary>

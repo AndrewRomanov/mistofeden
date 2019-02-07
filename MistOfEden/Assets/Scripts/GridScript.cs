@@ -121,7 +121,7 @@ public class GridScript : MonoBehaviour
     /// <summary>
     /// Список нодов, формирующих путь
     /// </summary>
-    public List<Node> path;
+    public List<Node> Path;
 
     /// <summary>
     /// Метод для отладки. Показывает гизмо различных объектов
@@ -135,7 +135,7 @@ public class GridScript : MonoBehaviour
             foreach (var node in grid)
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
-                if (path != null && path.Contains(node))
+                if (Path != null && Path.Contains(node))
                 {
                     Gizmos.color = Color.black;
                 }
