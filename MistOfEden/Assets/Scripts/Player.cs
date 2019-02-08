@@ -25,22 +25,24 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        grid = aStar.GetComponent<GridScript>();
+		grid = aStar.GetComponent<GridScript>();
     }
 
-    bool isMove = false;
-    private void Update()
-    {
-        if (Input.GetKeyDown("space") && !isMove)
-        {
-            isMove = true;
-            List<Node> path = grid.Path;
-            while (transform.position.x < grid.Path[0].WorldPosition.x || transform.position.z < grid.Path[0].WorldPosition.z)
-            {
-                var step = Speed * Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, grid.Path[0].WorldPosition, step);
-            }
-            isMove = false;
-        }
-    }
+	private bool isMove = false;
+	private void FixedUpdate()
+	{
+		if(Input.GetKeyDown(KeyCode.Space))
+		{
+			isMove = true;
+		}
+		if (isMove && grid.Path.Count > 0 && transform.position.x != grid.Path[0].WorldPosition.x && transform.position.z != grid.Path[0].WorldPosition.z)
+		{
+			transform.position = Vector3.MoveTowards(transform.position, grid.Path[0].WorldPosition, Speed * Time.deltaTime);
+			Debug.Log(isMove);
+		}
+		else
+		{
+			isMove = false;
+		}
+	}
 }
