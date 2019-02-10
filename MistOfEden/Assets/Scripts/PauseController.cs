@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.SceneManagement;
 
-public class MenuController : MonoBehaviour
+public class PauseController : MonoBehaviour
 {
-    public string mainMenuScene;
+    public SceneAsset mainMenuScene;
     public GameObject pauseMenu;
     public bool isPaused;
 
@@ -27,6 +28,6 @@ public class MenuController : MonoBehaviour
     public void ReturnToMain()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene(mainMenuScene);
+        SceneManager.LoadScene(mainMenuScene.name);
     }
 }

@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad97f59fe11e34a46a1224c3ff2a803a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuScene: MainMenu
+  mainMenuScene: {fileID: 102900000, guid: f704c03977bdc3e4a9a2334e025fde3f, type: 3}
   pauseMenu: {fileID: 751768423}
   isPaused: 0
 --- !u!1 &505267932
