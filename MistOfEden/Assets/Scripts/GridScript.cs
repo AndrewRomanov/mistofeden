@@ -1,24 +1,46 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class Grid : MonoBehaviour
+/// <summary>
+/// Класс, определяющий игровую сетку
+/// </summary>
+public class GridScript : MonoBehaviour
 {
-    public Transform Player; // Поле для отладки привязки игрока к клетке
-    private Node[,] _grid; // Массив клеток
-    float nodeDiameter; // Диаметр одной клетки
+    /// <summary>
+    /// Поле для отладки привязки игрока к клетке
+    /// </summary>
+    public Transform Player;
+
+    /// <summary>
+    /// Массив клеток
+    /// </summary>
+    private Node[,] grid;
+
+    /// <summary>
+    /// Диаметр одной клетки
+    /// </summary>
+    float nodeDiameter;
+
     /// <summary>
     /// Радиус одной клетки
     /// </summary>
     public float NodeRadius;
+
     /// <summary>
     /// Размеры сетки
     /// </summary>
     public Vector2 GridWorldSize;
+
     /// <summary>
     /// Слой, к которому будут принадлежать объекты, по которым нельзя ходить
     /// </summary>
     public LayerMask UnwalkableLayerMask;
 
-    int gridSizeX, gridSizeY; // Поля определяющие размер сетки по X и Y
+    /// <summary>
+    /// Поля определяющие размер сетки по X и Y
+    /// </summary>
+    private int gridSizeX, gridSizeY;
+
     private void Start()
     {
         // Определяем диаметр клетки
@@ -30,13 +52,40 @@ public class Grid : MonoBehaviour
     }
 
     /// <summary>
+    /// Метод возвращающий всех соседей для данной клетки
+    /// </summary>
+    /// <param name="node">Клетка, для которой ищутся соседи</param>
+    /// <returns>Список соседних клеток</returns>
+    public List<Node> GetNeighbours(Node node)
+    {
+        List<Node> neighbours = new List<Node>();
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (x == 0 && y == 0)
+                    continue;
+
+                int checkX = node.GridX + x;
+                int checkY = node.GridY + y;
+
+                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
+                {
+                    neighbours.Add(grid[checkX, checkY]);
+                }
+            }
+        }
+        return neighbours;
+    }
+
+    /// <summary>
     /// Создание сетки
     /// </summary>
     /// <param name="gridSizeX">Размерность по x</param>
     /// <param name="gridSizeY">Размерность по y</param>
     private void CreateGrid(int gridSizeX, int gridSizeY)
     {
-        _grid = new Node[gridSizeX, gridSizeY];
+        grid = new Node[gridSizeX, gridSizeY];
         // Определяем левую границу сетки
         Vector3 worldBottomLeft = transform.position - Vector3.right * GridWorldSize.x / 2 - Vector3.forward * GridWorldSize.y / 2;
         for (int x = 0; x < gridSizeX; x++)
@@ -45,7 +94,7 @@ public class Grid : MonoBehaviour
             {
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + NodeRadius) + Vector3.forward * (y * nodeDiameter + NodeRadius);
                 bool walkable = !Physics.CheckSphere(worldPoint, NodeRadius, UnwalkableLayerMask);
-                _grid[x, y] = new Node(walkable, worldPoint);
+                grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
         }
     }
@@ -66,8 +115,13 @@ public class Grid : MonoBehaviour
         // Находим нод по координатам
         int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
         int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
-        return _grid[x, y];
+        return grid[x, y];
     }
+
+    /// <summary>
+    /// Список нодов, формирующих путь
+    /// </summary>
+    public List<Node> Path;
 
     /// <summary>
     /// Метод для отладки. Показывает гизмо различных объектов
@@ -75,12 +129,16 @@ public class Grid : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawCube(transform.position, new Vector3(GridWorldSize.x, 1, GridWorldSize.y));
-        if (_grid != null)
+        if (grid != null)
         {
             var playerNode = NodeFromWorldPoint(Player.position);
-            foreach (var node in _grid)
+            foreach (var node in grid)
             {
                 Gizmos.color = node.Walkable ? Color.white : Color.red;
+                if (Path != null && Path.Contains(node))
+                {
+                    Gizmos.color = Color.black;
+                }
                 if (node == playerNode)
                 {
                     Gizmos.color = Color.cyan;
