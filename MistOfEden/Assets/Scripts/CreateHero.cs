@@ -51,8 +51,8 @@ public class CreateHero : MonoBehaviour
     public void OnPaladinClick() => SelectedHeroType = HeroType.Paladin;
     public void OnCreate()
     {
-        ConfigurationManager.Heroes.Add(new Hero { HeroType = SelectedHeroType });
+        ConfigurationManager.AddHero(new Hero { HeroType = SelectedHeroType });
         CurrentMenu.SetActive(false);
         BackMenu.SetActive(true);
-    }
+	}
 }
