@@ -41,6 +41,11 @@ public class GridScript : MonoBehaviour
     /// </summary>
     private int gridSizeX, gridSizeY;
 
+    /// <summary>
+    /// Игровой контроллер
+    /// </summary>
+    public GameController GameController;
+
     private void Start()
     {
         // Определяем диаметр клетки
@@ -97,6 +102,7 @@ public class GridScript : MonoBehaviour
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
         }
+        GameController.FillGrid(grid, nodeDiameter);
     }
 
     /// <summary>
@@ -123,28 +129,28 @@ public class GridScript : MonoBehaviour
     /// </summary>
     public List<Node> Path;
 
-    /// <summary>
-    /// Метод для отладки. Показывает гизмо различных объектов
-    /// </summary>
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawCube(transform.position, new Vector3(GridWorldSize.x, 1, GridWorldSize.y));
-        if (grid != null)
-        {
-            var playerNode = NodeFromWorldPoint(Player.position);
-            foreach (var node in grid)
-            {
-                Gizmos.color = node.Walkable ? Color.white : Color.red;
-                if (Path != null && Path.Contains(node))
-                {
-                    Gizmos.color = Color.black;
-                }
-                if (node == playerNode)
-                {
-                    Gizmos.color = Color.cyan;
-                }
-                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (nodeDiameter - 0.1f));
-            }
-        }
-    }
+    ///// <summary>
+    ///// Метод для отладки. Показывает гизмо различных объектов
+    ///// </summary>
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.DrawCube(transform.position, new Vector3(GridWorldSize.x, 1, GridWorldSize.y));
+    //    if (grid != null)
+    //    {
+    //        var playerNode = NodeFromWorldPoint(Player.position);
+    //        foreach (var node in grid)
+    //        {
+    //            Gizmos.color = node.Walkable ? Color.white : Color.red;
+    //            if (Path != null && Path.Contains(node))
+    //            {
+    //                Gizmos.color = Color.black;
+    //            }
+    //            if (node == playerNode)
+    //            {
+    //                Gizmos.color = Color.cyan;
+    //            }
+    //            Gizmos.DrawCube(node.WorldPosition, Vector3.one * (nodeDiameter - 0.1f));
+    //        }
+    //    }
+    //}
 }
