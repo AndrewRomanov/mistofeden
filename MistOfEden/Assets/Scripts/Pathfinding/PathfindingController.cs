@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// Класс, отвечающий за поиск пути
+/// Контроллер, отвечающий за поиск пути
 /// </summary>
-public class Pathfinding : MonoBehaviour
+public class PathfindingController : MonoBehaviour
 {
     /// <summary>
     /// Поля определяющие начальную и конечную точки
